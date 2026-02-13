@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+072a5a02128de612bbce30da54581d4a AudioStreamVST_artefacts/JuceLibraryCode/AudioStreamVST_AU/PkgInfo
+0b84249da0538b9924471567015a56e9 AudioStreamVST_artefacts/JuceLibraryCode/AudioStreamVST_Standalone/PkgInfo
+2694aba93466f2c4ba15056a66425c2c AudioStreamVST_artefacts/JuceLibraryCode/AudioStreamVST_VST3/PkgInfo
+f45a7e48f84bf332200ca3639b5282fe AudioStreamVST_artefacts/JuceLibraryCode/JuceHeader.h
