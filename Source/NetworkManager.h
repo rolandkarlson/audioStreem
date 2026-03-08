@@ -4,6 +4,7 @@
 
 struct AudioPacketHeader {
   int64_t sequenceNumber;
+  int64_t sourceID; // Unique ID of the sender
   int32_t sampleRate;
   int16_t channels;
   int32_t payloadSize; // Number of samples
@@ -32,6 +33,8 @@ private:
   juce::String remoteIP;
   int txPort = 0;
   int rxPort = 0;
+
+  int64_t localInstanceID = 0; // Randomly generated on startup
 
   std::atomic<bool> isStreaming{false};
   std::atomic<int64_t> sequenceCounter{0};

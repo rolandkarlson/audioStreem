@@ -6,6 +6,12 @@
 
 NetworkManager::NetworkManager(AudioBufferQueue &sQ, AudioBufferQueue &rQ)
     : Thread("NetworkThread"), sendQueue(sQ), receiveQueue(rQ) {
+
+  // Generate a random instance ID
+  juce::Random rng;
+  localInstanceID = rng.nextInt64();
+  DBG("NetworkManager: Local Instance ID: " << localInstanceID);
+
   floatBuffer.resize(packetSampleCount);
   pcmBuffer.resize(packetSampleCount);
   // Header + data size (int16 = 2 bytes)
@@ -57,10 +63,10 @@ juce::String NetworkManager::startStreaming(const juce::String &targetIP,
     DBG("UDP Socket bound to port " << rxPort);
     isStreaming = true;
     startThread();
-    return {}; // Empty string = Success
+    return "Resolved: " + remoteIP;
   } else {
     DBG("UDP Socket failed to bind to port " << rxPort);
-    return "Failed to bind to port " + juce::String(rxPort);
+    return "Error: Failed to bind to port " + juce::String(rxPort);
   }
 }
 
@@ -97,6 +103,7 @@ void NetworkManager::sendPendingAudio() {
     juce::MemoryBlock packetData;
     AudioPacketHeader header;
     header.sequenceNumber = sequenceCounter++;
+    header.sourceID = localInstanceID; // Tag with our ID
     header.sampleRate = 44100;
     header.channels = 1;
     header.payloadSize = packetSampleCount;
@@ -122,6 +129,11 @@ void NetworkManager::checkIncomingPackets() {
     if (bytesReceived > (int)sizeof(AudioPacketHeader)) {
       AudioPacketHeader header;
       memcpy(&header, receiveBuffer.data(), sizeof(header));
+
+      // Check Source ID - Ignore our own packets
+      if (header.sourceID == localInstanceID) {
+        return;
+      }
 
       int sampleCount = header.payloadSize;
       int16_t *pcmData =

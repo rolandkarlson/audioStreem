@@ -4,7 +4,7 @@
 AudioStreamVSTAudioProcessorEditor::AudioStreamVSTAudioProcessorEditor(
     AudioStreamVSTAudioProcessor &p)
     : AudioProcessorEditor(&p), audioProcessor(p) {
-  setSize(400, 200);
+  setSize(400, 400);
 
   addAndMakeVisible(serverLabel);
   addAndMakeVisible(serverEditor);
@@ -48,10 +48,11 @@ AudioStreamVSTAudioProcessorEditor::AudioStreamVSTAudioProcessorEditor(
     // Omnidirectional: Send to User:Port, Listen on Local:Port
     juce::String result = audioProcessor.startStreaming(targetIP, port, port);
 
-    if (result.isEmpty()) {
-      log("Success! Listening on port " + juce::String(port));
+    if (result.startsWith("Error")) {
+      log(result);
     } else {
-      log("Error: " + result);
+      log("Success! " + result + ". Listening/Sending on port " +
+          juce::String(port));
     }
   };
 
